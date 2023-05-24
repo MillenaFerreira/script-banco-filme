@@ -1180,6 +1180,186 @@ select concat('Filme: ', tbl_filme.nome) as nome_filme_formatado from tbl_filme;
 # concat e substr juntos
 select concat(substr(tbl_filme.sinopse, 1, 50), '... Leia Mais') as sinopse_reduzida from tbl_filme;
 
+select * from tbl_filme;
+desc tbl_filme;
+
+alter table tbl_filme
+		add column valor_unitario float;
+
+update tbl_filme set valor_unitario = 43.50 where id = 1;
+update tbl_filme set valor_unitario = 37.80 where id = 3;
+update tbl_filme set valor_unitario = 50.10 where id = 4;
+
+#Encontra o menor valor 
+select min(valor_unitario) as minimo from tbl_filme;
+
+#Encontra o maior valor
+select max(valor_unitario) as maximo from tbl_filme;
+
+#Encontra a média dos valores
+select avg(valor_unitario) as media from tbl_filme;
+
+#Limita as casas decimais e realiza o arredondamento
+select round(avg(valor_unitario), 2) as media_2casas_decimais from tbl_filme;
+
+#Soma de todos os valores
+select round(sum(valor_unitario), 2) as total from tbl_filme;
+
+#Realizando calculos matematicos no BANCO DE DADOS
+select tbl_filme.nome, tbl_filme.foto_capa, 
+	   concat('R$ ' , tbl_filme.valor_unitario) as valor_unitario, 
+	   concat('R$ ' , round((tbl_filme.valor_unitario - ((tbl_filme.valor_unitario * 10)/100)), 2)) as valor_desconto	
+from tbl_filme;
+
+#OPERADORES DE COMPARAÇÃO
+# = 			Igualdade
+# <				Menor
+# > 			Maior
+# <=			Menor ou igual
+# >=			Maior ou igual
+# <> ou !=		Diferente
+# like			
+# is			
+
+#OPERADORES LÓGICOS
+# and
+# or
+# not	
+
+
+# Menor
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario < 40;
+
+# Menor ou igual
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario <= 40;
+
+# Maior
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario > 40;
+
+# Maior ou igual
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario >= 40;
+
+# Exemplo com o order by
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario >= 40
+order by tbl_filme.valor_unitario desc;
+
+# Diferente
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario <> 40;
+
+#LIKE
+select * from tbl_filme where tbl_filme.nome = 'leão';
+select * from tbl_filme where tbl_filme.nome like 'leão'; #Retorna somente a igualdade
+select * from tbl_filme where tbl_filme.nome like 'leão%'; #Retorna o que inicia com a palavra chave
+select * from tbl_filme where tbl_filme.nome like '%leão'; #Retorna o que termina com a palavra chave
+select * from tbl_filme where tbl_filme.nome like '%leão%'; #Retorna por qualquer parte da busca
+
+
+# Pedindo para retornar os filmes que tem valor unitario e os que o valor unitario são null 
+select tbl_filme.nome, tbl_filme.foto_capa, tbl_filme.valor_unitario
+from tbl_filme
+where tbl_filme.valor_unitario <> 40 or tbl_filme.valor_unitario is null;
+
+
+# is - verifica se os registro estão nulos
+select * from tbl_filme where tbl_filme.valor_unitario is null; 
+
+# is not - verifica se os registros não estão nulos
+select * from tbl_filme where tbl_filme.valor_unitario is not null;
+
+# Retorna entre 40 e 50
+select * from tbl_filme
+where tbl_filme.valor_unitario >= 40 and tbl_filme.valor_unitario <=50;
+
+# between - Retorna os registro com um range de valores
+select * from tbl_filme
+where tbl_filme.valor_unitario between 40 and 50;
+
+# not betwwn - retorna as estremidades, ou seja, tudo que não for entre 40 e 50
+select * from tbl_filme
+where tbl_filme.valor_unitario not between 40 and 50;
 
 
 
+######### FORMATANDO DATA E HORA ############
+
+# Mostrar a data atual do servidor
+select curdate() as data_atual;
+select current_date() as data_atual;
+
+# Mostra a hora atual do servidor
+select curtime() as hora_atual;
+select current_time() as hora_atual;
+
+# Mostra a data e a hora atual
+select current_timestamp() as data_hora_atual;
+
+#Formatando a Hora
+select time_format( curtime(), '%H') as horario_formatado; #retorna somente a hora (00 a 23)
+select time_format( curtime(), '%T') as horario_formatado; #retorna a hora assim como o H
+select time_format( curtime(), '%h') as horario_formatado; #Retorna somente a hora (00 a 12)
+select time_format( curtime(), '%i') as horario_formatado; #Retorna somente o minuto
+select time_format( curtime(), '%s') as horario_formatado; #Retorna somente o segundo
+select time_format( curtime(), '%Hh%i') as horario_formatado; #Retorna a hora e a minuto
+select time_format( curtime(), '%r') as horario_formatado; #Retorna no padrão(AM / PM)
+select time_format( curtime(), '%p') as horario_formatado; #Retorna somente padrão(AM / PM)
+
+# Funções (hour, minute, second)
+select hour(curtime()) as hora_formatada; #Retorna só a Hora
+select minute(curtime()) as hora_formatada; # retorna só o minuto
+select second(curtime()) as hora_formatada; # retorna só o segundo
+
+# Formatando Data
+select date_format(curdate(), '%d') as data_formatada; # Retorna o dia 
+select date_format(curdate(), '%m') as data_formatada; # Retorna o mês em numeral
+select date_format('2020-11-21', '%M') as data_formatada; # Retorna o mês por extenso
+select date_format('2020-11-21', '%b') as data_formatada; # Retorna o mês abreviado
+select date_format(curdate(), '%y') as data_formatada; # Retorna o ano com 2 digitos
+select date_format(curdate(), '%Y') as data_formatada; # Retorna o ano com 4 digitos
+select date_format(curdate(), '%w') as data_formatada; # Retorna o numeral do dia da semana
+select date_format(curdate(), '%W') as data_formatada; # Retorna o nome do dia da semana
+
+
+select day(curdate()) as data_formatada; # Retorna somente o dia
+select month(curdate()) as data_formatada; # Retorna somente o mês
+select year(curdate()) as data_formatada; # Retorna somente o ano
+select dayname(curdate()) as data_formatada; # Retorna o dia extenso
+select dayofmonth(curdate()) as data_formatada; # Retorna o dia do mês
+select dayofyear(curdate()) as data_formatada; # Retorna o dia do ano
+select dayofweek(curdate()) as data_formatada; # Retorna o dia em numeral da semana
+select monthname(curdate()) as data_formatada; # Retorna nome do mês
+select yearweek(curdate()) as data_formatada; # Retorna o ano e a semana
+select weekofyear(curdate()) as data_formatada; # Retorna apenas a semana do ano
+
+
+select date_format(curdate(), '%d/%m/%Y') as data_formatada; # retorna no padrão br
+select date_format(str_to_date('05/07/2022', '%d/%m/%Y'), '%Y-%m-%d') as data_universal; # retorna no padrão universal
+
+#Diferença de datas
+select datediff('2023-05-24', '2023-05-01') as qtde_dias,
+		(datediff('2023-05-24', '2023-05-01')*5) as valor_pagar;
+
+# Difernça de horas        
+select timediff('16:15:00', '10:05:10') as qtde_horas,
+		hour(timediff('16:15:00', '10:05:10')* 5) as valor_pagar,
+        addtime(timediff('16:15:00', '10:05:10'), '01:00:00');
+        
+# Soma de horas
+select addtime('06:00:00', '01:00:00');
+
+select 'senai' as dados,
+	   md5('senai') as dados_criptografados_md5,
+       sha('senai') as dados_criptografados_sha,
+       sha1('senai') as dados_criptografados_sha1,
+       sha2('senai', 256) as dados_criptografados_sha2;
