@@ -301,7 +301,8 @@ insert into tbl_genero(nome) values ('Aventura'),
 insert into tbl_genero(nome) values ('Fantasia'),
 								    ('Ação'),
                                     ('Suspense');
-                                    
+insert into tbl_genero(nome)values('Guerra'),
+								  ('Histórico');                                    
 select * from tbl_genero;
 
 #UPDATE
@@ -321,8 +322,10 @@ insert into tbl_classificacao(sigla, nome, descricao) values ('L', 'Livre', 'Nã
 															 ('14', 'Não recomendado para menores de 14 anos','Conteúdo mais violentos e/ou de linguagem sexual mais acentuada'),
 															 ('16', 'Não recomendado para menores de 16 anos','Conteúdo mais violentos ou com contéudo sexual mais intenso com cenas de tortura, suicídio, estrupro ou nudez total'),
 															 ('18', 'Não recomendado para menores de 18 anos','Conteúdo violentos e sexuais extremos.Cenas de sexo, incesto ou atos repetidos de tortura, mutilação ou abuso sexual');
-                                                             
-                                                             
+
+
+insert into tbl_classificacao(sigla, nome, descricao)values("NA", "Não Aplicado", "Não aplicavel a nenhum filme");
+                                                                                                                          
 select * from tbl_classificacao;
         
         
@@ -447,7 +450,28 @@ insert into tbl_filme(
                         'https://br.web.img2.acsta.net/c_310_420/pictures/19/04/26/17/30/2428965.jpg',
                         'Em Vingadores: Ultimato, após Thanos eliminar metade das criaturas vivas em Vingadores: Guerra Infinita, os heróis precisam lidar com a dor da perda de amigos e seus entes queridos. Com Tony Stark (Robert Downey Jr.) vagando perdido no espaço sem água nem comida, o Capitão América/Steve Rogers (Chris Evans) e a Viúva Negra/Natasha Romanov (Scarlett Johansson) precisam liderar a resistência contra o titã louco.',
                         3
-                        );                        
+                        );
+                        
+insert into tbl_filme(
+						nome,
+                        nome_original,
+                        data_lancamento,
+                        data_relancamento,
+                        duracao,
+                        foto_capa,
+                        sinopse,
+                        id_classificacao
+                        ) values (
+                        'A LISTA DE SCHINDLER',
+                        'Schindler s List',
+                        '1993-12-31',
+                        '2019-05-01' ,
+                        '03:15:00',
+                        'https://br.web.img3.acsta.net/c_310_420/pictures/19/04/10/19/44/2904073.jpg',
+                        'A inusitada história de Oskar Schindler (Liam Neeson), um sujeito oportunista, sedutor, "armador", simpático, comerciante no mercado negro, mas, acima de tudo, um homem que se relacionava muito bem com o regime nazista, tanto que era membro do próprio Partido Nazista (o que não o impediu de ser preso algumas vezes, mas sempre o libertavam rapidamente, em razão dos seus contatos). No entanto, apesar dos seus defeitos, ele amava o ser humano e assim fez o impossível, a ponto de perder a sua fortuna mas conseguir salvar mais de mil judeus dos campos de concentração.',
+                        4
+                        );
+                                            
 update tbl_filme set nome = 'Vingadores: Ultimato' where id =  6;                      
                                                              
 select * from tbl_filme;       
@@ -1435,3 +1459,135 @@ from tbl_filme
 		inner join tbl_sexo
 			on tbl_sexo.id = tbl_ator.id_sexo   
 order by nome_filme, nome_ator asc;
+
+
+
+select tbl_filme.nome as nome_filme, tbl_genero.nome as nome_genero
+from tbl_filme
+	inner join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	inner join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero;
+ 
+ 
+ 
+############# LEFT JOIN
+
+# Exemplo 1
+select tbl_filme.nome as nome_filme, tbl_genero.nome as nome_genero,
+	   tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	left join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	left join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	inner join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao
+			order by tbl_filme.nome;
+
+
+############# RIGHT JOIN
+
+# Exemplo 1
+select tbl_filme.nome as nome_filme, tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+		right join tbl_classificacao
+			on tbl_classificacao.id = tbl_filme.id_classificacao order by tbl_filme.nome;
+
+# Exemplo 2
+select tbl_filme.nome as nome_filme, tbl_genero.nome as nome_genero
+from tbl_filme
+	right join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	right join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero order by tbl_filme.nome;
+
+# Exemplo 3
+select tbl_filme.nome as nome_filme, tbl_genero.nome as nome_genero,
+	   tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	right join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	right join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	left join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao
+			order by tbl_filme.nome;
+
+
+#FULL JOIN
+# ele vai verificar se á uma igualdade nas tabelas e se existir ele elimina a linha que está igual
+select tbl_filme.nome as nome_filme, tbl_filme.data_lancamento, 
+	   tbl_genero.nome as nome_genero, 
+       tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	left join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	left join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	inner join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao
+        
+union
+
+select tbl_filme.nome as nome_filme, '0' as data_lancamento,
+	   tbl_genero.nome as nome_genero, 
+       tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	right join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	right join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	left join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao;
+
+
+# ele vai trazer todos os dados mesmo que se repita os valores
+select tbl_filme.nome as nome_filme, tbl_filme.data_lancamento, 
+	   tbl_genero.nome as nome_genero, 
+       tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	left join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	left join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	inner join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao
+        
+union all
+
+select tbl_filme.nome as nome_filme, '0' as data_lancamento,
+	   tbl_genero.nome as nome_genero, 
+       tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	right join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	right join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	left join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao;
+
+# ele faz a mesma coisa do union sozinho só que ainda sim vir igual, ele vai "obrigar" a fazer a comparação e assim trazendo apenas os não replicados
+select tbl_filme.nome as nome_filme, tbl_filme.data_lancamento, 
+	   tbl_genero.nome as nome_genero, 
+       tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	left join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	left join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	inner join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao
+        
+union distinct
+
+select tbl_filme.nome as nome_filme, '0' as data_lancamento,
+	   tbl_genero.nome as nome_genero, 
+       tbl_classificacao.nome as nome_classificacao
+from tbl_filme
+	right join tbl_filme_genero
+		on tbl_filme.id = tbl_filme_genero.id_filme
+	right join tbl_genero
+		on tbl_genero.id = tbl_filme_genero.id_genero
+	left join tbl_classificacao
+		on tbl_classificacao.id = tbl_filme.id_classificacao;
